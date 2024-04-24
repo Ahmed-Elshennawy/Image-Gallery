@@ -11,22 +11,12 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with TickerProviderStateMixin {
-  late TabController _tabController;
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
-  }
-
-  @override
-  void initState() {
-    _tabController = TabController(
-      length: 2,
-      vsync: this,
-    );
-    super.initState();
   }
 
   @override
@@ -54,55 +44,28 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
           const SizedBox(width: 20),
         ],
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  child: MasonryGridView.count(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 20,
-                    crossAxisSpacing: 20,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => Details(
-                                    imageUrl:
-                                        'https://picsum.photos/${1080 + index}/${(index % 2 + 1) * 1209}',
-                                  ),
-                                ),
-                              );
-                            },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: CachedNetworkImage(
-                                imageUrl:
-                                    'https://picsum.photos/${1080 + index}/${(index % 2 + 1) * 1209}',
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ),
-                Container(color: Colors.blue),
-              ],
-            ),
+      body: Expanded(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 8,
           ),
-        ],
+          child: MasonryGridView.count(
+            crossAxisCount: 2,
+            mainAxisSpacing: 20,
+            crossAxisSpacing: 20,
+            itemBuilder: (context, index) {
+              return Column(
+                children: [
+                  MyCustomWidget(
+                    imageUrl:
+                        'https://picsum.photos/${1080 + index}/${(index % 2 + 1) * 1209}',
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
@@ -145,11 +108,86 @@ class SearchDelegator extends SearchDelegate<String> {
 
   @override
   Widget buildResults(BuildContext context) {
-    return const Text('');
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 8,
+        ),
+        child: MasonryGridView.count(
+          crossAxisCount: 2,
+          mainAxisSpacing: 20,
+          crossAxisSpacing: 20,
+          itemBuilder: (context, index) {
+            switch (query.toLowerCase()) {
+              case 'nature':
+                return MyCustomWidget(
+                  imageUrl:
+                      'https://picsum.photos/${670 + index}/${(index % 2 + 1) * 230}',
+                );
+              case 'morning':
+                return MyCustomWidget(
+                  imageUrl:
+                      'https://picsum.photos/${834 + index}/${(index % 2 + 1) * 230}',
+                );
+              case 'people':
+                return MyCustomWidget(
+                  imageUrl:
+                      'https://picsum.photos/${769 + index}/${(index % 2 + 1) * 398}',
+                );
+              default:
+                return MyCustomWidget(
+                  imageUrl:
+                      'https://picsum.photos/${1080 + index}/${(index % 2 + 1) * 1209}',
+                );
+            }
+          },
+        ),
+      ),
+    );
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return const Text('');
+    final suggestionList = ['nature', 'morning', 'people'];
+    return ListView.builder(
+      itemCount: suggestionList.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(suggestionList[index]),
+          onTap: () {
+            query = suggestionList[index];
+            showResults(context);
+          },
+        );
+      },
+    );
+  }
+}
+
+class MyCustomWidget extends StatelessWidget {
+  final String imageUrl;
+
+  const MyCustomWidget({super.key, required this.imageUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Details(imageUrl: imageUrl),
+          ),
+        );
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: CachedNetworkImage(
+          imageUrl: imageUrl,
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
   }
 }
