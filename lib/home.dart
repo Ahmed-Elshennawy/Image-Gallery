@@ -39,11 +39,19 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
           'Discover',
           style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
         ),
-        actions: const [
-          Icon(Icons.search),
-          SizedBox(width: 20),
-          Icon(Icons.filter_list),
-          SizedBox(width: 20),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              showSearch(
+                context: context,
+                delegate: SearchDelegator(),
+              );
+            },
+          ),
+          const SizedBox(width: 20),
+          const Icon(Icons.filter_list),
+          const SizedBox(width: 20),
         ],
       ),
       body: Column(
@@ -71,7 +79,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                                 MaterialPageRoute(
                                   builder: (context) => Details(
                                     imageUrl:
-                                        'https://picsum.photos/${1001 + index}/${(index % 2 + 1) * 1004}',
+                                        'https://picsum.photos/${1080 + index}/${(index % 2 + 1) * 1209}',
                                   ),
                                 ),
                               );
@@ -80,7 +88,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                               borderRadius: BorderRadius.circular(10),
                               child: CachedNetworkImage(
                                 imageUrl:
-                                    'https://picsum.photos/${1001 + index}/${(index % 2 + 1) * 1004}',
+                                    'https://picsum.photos/${1080 + index}/${(index % 2 + 1) * 1209}',
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -109,5 +117,39 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
         ],
       ),
     );
+  }
+}
+
+class SearchDelegator extends SearchDelegate<String> {
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: const Icon(Icons.clear),
+        onPressed: () {
+          query = '';
+        },
+      ),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, '');
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return const Text('');
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return const Text('');
   }
 }

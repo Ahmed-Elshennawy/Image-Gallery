@@ -55,7 +55,7 @@ class _DetailsState extends State<Details> {
                     ),
                   ),
                 ),
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < 10; i++)
                   Container(
                     margin: const EdgeInsets.symmetric(vertical: 10.0),
                     decoration: BoxDecoration(
